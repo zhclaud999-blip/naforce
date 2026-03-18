@@ -1,0 +1,12 @@
+{
+  "name": "naforce",
+  "version": "1.0.0",
+  "description": "AI Blog Generator",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "vercel": "^32.0.0"
+  }
+}
