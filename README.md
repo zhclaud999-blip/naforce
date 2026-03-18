@@ -1,0 +1,1 @@
+# NaForce\n\nAI Blog Generator
