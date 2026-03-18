@@ -3,140 +3,301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NaForce - AI Blog Generator</title>
+  <title>⚡ NaForce - AI Blog Generator</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --primary: #00ff88;
+      --primary-dark: #00cc6a;
       --bg: #0a0a0a;
       --bg2: #111;
-      --text: #eee;
+      --bg3: #1a1a1a;
+      --text: #f0f0f0;
       --text2: #888;
+      --border: #333;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 20px;
+      line-height: 1.6;
+    }
+    /* 背景效果 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(0,255,136,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(0,200,255,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
     .container {
       max-width: 900px;
       margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
     }
     h1 {
       text-align: center;
-      margin-bottom: 30px;
-      color: var(--primary);
-      font-weight: 300;
-      letter-spacing: 4px;
+      font-size: 3em;
+      font-weight: 200;
+      letter-spacing: 8px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--primary), #00ddff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      text-align: center;
+      color: var(--text2);
+      margin-bottom: 40px;
+      font-size: 14px;
+      letter-spacing: 2px;
     }
     .card {
       background: var(--bg2);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+    .card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 30px rgba(0,255,136,0.1);
+      transition: all 0.3s ease;
     }
     label {
       display: block;
       margin-bottom: 8px;
       color: var(--text2);
-      font-size: 14px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     input, select, textarea {
       width: 100%;
-      padding: 12px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
+      padding: 14px 16px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       color: var(--text);
-      font-size: 16px;
-      margin-bottom: 16px;
+      font-size: 15px;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: var(--primary);
     }
+    select {
+      cursor: pointer;
+    }
     button {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: #000;
       border: none;
-      padding: 14px 32px;
-      border-radius: 8px;
+      padding: 16px 40px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
-    button:hover { transform: scale(1.02); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-group { display: flex; gap: 12px; }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,255,136,0.3);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
     .btn-outline {
       background: transparent;
       border: 2px solid var(--primary);
       color: var(--primary);
     }
+    .btn-outline:hover {
+      background: var(--primary);
+      color: #000;
+    }
     #result {
       min-height: 200px;
+      padding: 20px;
+      background: var(--bg3);
+      border-radius: 12px;
       white-space: pre-wrap;
       line-height: 1.8;
     }
     #result h1, #result h2, #result h3 {
-      margin: 1em 0 0.5em;
+      margin: 1.5em 0 0.5em;
       color: var(--primary);
     }
+    #result h1:first-child { margin-top: 0; }
     #result p { margin-bottom: 1em; }
+    #result ul, #result ol { margin: 1em 0; padding-left: 1.5em; }
+    #result li { margin-bottom: 0.5em; }
+    #result blockquote {
+      border-left: 4px solid var(--primary);
+      padding-left: 1em;
+      margin: 1em 0;
+      color: var(--text2);
+    }
+    #result code {
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+    }
+    #result pre {
+      background: var(--bg2);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
     .loading {
       text-align: center;
-      color: var(--text2);
       padding: 40px;
+      color: var(--text2);
     }
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     .hidden { display: none; }
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 600px) {
+      .settings-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2em; }
+    }
+    .api-key-wrapper {
+      position: relative;
+    }
+    .api-key-wrapper input {
+      padding-right: 50px;
+    }
+    .toggle-key {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      background: none;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 0;
+      font-size: 14px;
+    }
+    .toggle-key:hover { color: var(--primary); }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>⚡ NaForce</h1>
+    <p class="subtitle">AI Blog Generator</p>
     
     <div class="card">
-      <label>选择模型</label>
-      <select id="model">
-        <option value="deepseek">DeepSeek (推荐)</option>
-        <option value="openai">OpenAI GPT-3.5</option>
-        <option value="anthropic">Claude 3</option>
-      </select>
+      <div class="settings-grid">
+        <div>
+          <label>选择模型</label>
+          <select id="model">
+            <option value="deepseek">DeepSeek (推荐)</option>
+            <option value="openai">OpenAI GPT-3.5</option>
+            <option value="anthropic">Claude 3 Haiku</option>
+            <option value="moonshot">月之暗面 (Moonshot)</option>
+            <option value="zhipu">智谱 GLM-4</option>
+          </select>
+        </div>
+        <div>
+          <label>文章长度</label>
+          <select id="length">
+            <option value="short">短文章 (~500字)</option>
+            <option value="medium" selected>中等 (~1500字)</option>
+            <option value="long">长文章 (~3000字)</option>
+          </select>
+        </div>
+      </div>
       
-      <label>API Key</label>
-      <input type="password" id="apiKey" placeholder="输入你的 API Key">
+      <div class="api-key-wrapper">
+        <label>API Key</label>
+        <input type="password" id="apiKey" placeholder="输入你的 API Key">
+        <button type="button" class="toggle-key" onclick="toggleApiKey()">👁</button>
+      </div>
       
       <label>文章标题</label>
-      <input type="text" id="title" placeholder="输入文章标题，如：如何学会游泳">
+      <input type="text" id="title" placeholder="例如：如何从零开始学会游泳">
       
-      <button id="generateBtn" onclick="generate()">✨ 生成文章</button>
+      <label>文章要求（可选）</label>
+      <textarea id="requirements" rows="2" placeholder="例如：口语化风格、面向新手、包含实际例子"></textarea>
+      
+      <button id="generateBtn" onclick="generate()">✨ 开始生成</button>
     </div>
     
     <div class="card hidden" id="resultCard">
-      <div class="btn-group" style="margin-bottom: 16px;">
+      <div class="btn-group" style="margin-bottom: 20px;">
         <button class="btn-outline" onclick="copy()">📋 复制</button>
         <button class="btn-outline" onclick="download()">📥 下载</button>
+        <button class="btn-outline" onclick="regenerate()">🔄 重新生成</button>
       </div>
       <div id="result"></div>
     </div>
   </div>
 
   <script>
-    // 从本地存储加载 API Key
+    // 从本地存储加载设置
     const savedKey = localStorage.getItem('naforce_apiKey');
     if (savedKey) document.getElementById('apiKey').value = savedKey;
     
     const savedModel = localStorage.getItem('naforce_model');
     if (savedModel) document.getElementById('model').value = savedModel;
 
+    function toggleApiKey() {
+      const input = document.getElementById('apiKey');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // 获取长度对应的 token 数
+    function getLengthPrompt(length) {
+      const prompts = {
+        short: '简洁明了，大约500字',
+        medium: '内容丰富，大约1500字',
+        long: '详尽深入，大约3000字'
+      };
+      return prompts[length] || prompts.medium;
+    }
+
     async function generate() {
       const apiKey = document.getElementById('apiKey').value.trim();
       const title = document.getElementById('title').value.trim();
       const model = document.getElementById('model').value;
+      const length = document.getElementById('length').value;
+      const requirements = document.getElementById('requirements').value.trim();
       const btn = document.getElementById('generateBtn');
       const resultCard = document.getElementById('resultCard');
       const result = document.getElementById('result');
@@ -146,57 +307,124 @@
         return;
       }
 
-      // 保存到本地
+      // 保存设置
       localStorage.setItem('naforce_apiKey', apiKey);
       localStorage.setItem('naforce_model', model);
 
       btn.disabled = true;
-      btn.textContent = '⏳ 生成中...';
+      btn.textContent = '⏳ 写作中...';
       resultCard.classList.add('hidden');
-      result.innerHTML = '<div class="loading">AI 正在写作中...</div>';
+      result.innerHTML = '<div class="loading">AI 正在为您创作文章</div>';
+
+      // 构建提示词
+      let prompt = `请根据以下标题写一篇博客文章：${title}\n`;
+      prompt += `文章长度：${getLengthPrompt(length)}\n`;
+      if (requirements) {
+        prompt += `要求：${requirements}\n`;
+      }
+      prompt += '\n请用 Markdown 格式输出，结构清晰，内容有价值。';
+
+      // 根据模型构建请求
+      let requestBody;
+      let url;
+
+      if (model === 'deepseek') {
+        url = 'https://api.deepseek.com/v1/chat/completions';
+        requestBody = {
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        };
+      } else if (model === 'openai') {
+        url = 'https://api.openai.com/v1/chat/completions';
+        requestBody = {
+          model: 'gpt-3.5-turbo',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        };
+      } else if (model === 'anthropic') {
+        url = 'https://api.anthropic.com/v1/messages';
+        requestBody = {
+          model: 'claude-3-haiku-20240307',
+          max_tokens: length === 'long' ? 4000 : length === 'medium' ? 2000 : 1000,
+          messages: [{ role: 'user', content: prompt }]
+        };
+      } else if (model === 'moonshot') {
+        url = 'https://api.moonshot.cn/v1/chat/completions';
+        requestBody = {
+          model: 'moonshot-v1-8k',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        };
+      } else if (model === 'zhipu') {
+        url = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+        requestBody = {
+          model: 'glm-4',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        };
+      }
 
       try {
-        const res = await fetch('/api/generate', {
+        const headers = { 'Content-Type': 'application/json' };
+        
+        if (model === 'anthropic') {
+          headers['x-api-key'] = apiKey;
+          headers['anthropic-version'] = '2023-06-01';
+        } else {
+          headers['Authorization'] = `Bearer ${apiKey}`;
+        }
+
+        const res = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, apiKey, model })
+          headers: headers,
+          body: JSON.stringify(requestBody)
         });
 
         const data = await res.json();
 
         if (data.error) {
-          result.innerHTML = '<div style="color: #ff4444;">错误: ' + data.error + '</div>';
+          result.innerHTML = '<div style="color: #ff6b6b;">❌ 错误: ' + data.error.message + '</div>';
         } else {
-          // 用 marked 渲染 markdown
-          result.innerHTML = marked.parse(data.content);
+          let content = '';
+          if (data.choices && data.choices[0]) {
+            content = data.choices[0].message.content;
+          } else if (data.content) {
+            content = data.content[0].text;
+          }
+          result.innerHTML = marked.parse(content);
         }
         
         resultCard.classList.remove('hidden');
       } catch (e) {
-        result.innerHTML = '<div style="color: #ff4444;">请求失败: ' + e.message + '</div>';
+        result.innerHTML = '<div style="color: #ff6b6b;">❌ 请求失败: ' + e.message + '</div>';
         resultCard.classList.remove('hidden');
       }
 
       btn.disabled = false;
-      btn.textContent = '✨ 生成文章';
+      btn.textContent = '✨ 开始生成';
     }
 
     function copy() {
       const text = document.getElementById('result').innerText;
       navigator.clipboard.writeText(text);
-      alert('已复制到剪贴板');
+      alert('已复制到剪贴板！');
     }
 
     function download() {
       const text = document.getElementById('result').innerText;
-      const title = document.getElementById('title').value;
-      const blob = new Blob([text], { type: 'text/markdown' });
+      const title = document.getElementById('title').value || 'article';
+      const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = (title || 'article') + '.md';
+      a.download = `${title}.md`;
       a.click();
       URL.revokeObjectURL(url);
+    }
+
+    function regenerate() {
+      generate();
     }
   </script>
 </body>
